@@ -365,48 +365,53 @@
       }
     };
 
-    // Country flags for each ETF
+    // Country flags for each ETF - using ISO 2-letter codes for flag images
     const COUNTRY_FLAGS = {
-      "EZA": "🇿🇦",   // South Africa
-      "EWA": "🇦🇺",   // Australia
-      "EWO": "🇦🇹",   // Austria
-      "EWK": "🇧🇪",   // Belgium
-      "EWZ": "🇧🇷",   // Brazil
-      "EWC": "🇨🇦",   // Canada
-      "MCHI": "🇨🇳",  // China
-      "EDEN": "🇩🇰",  // Denmark
-      "EFNL": "🇫🇮",  // Finland
-      "EWQ": "🇫🇷",   // France
-      "EWG": "🇩🇪",   // Germany
-      "EWH": "🇭🇰",   // Hong Kong
-      "INDA": "🇮🇳",  // India
-      "ECH": "🇨🇱",   // Chile
-      "EIDO": "🇮🇩",  // Indonesia
-      "EIS": "🇮🇱",   // Israel
-      "EPHE": "🇵🇭",  // Philippines
-      "EPOL": "🇵🇱",  // Poland
-      "EWM": "🇲🇾",   // Malaysia
-      "KSA": "🇸🇦",   // Saudi Arabia
-      "KWT": "🇰🇼",   // Kuwait
-      "QAT": "🇶🇦",   // Qatar
-      "THD": "🇹🇭",   // Thailand
-      "TOK": "🇯🇵",   // Japan (Kokusai index)
-      "TUR": "🇹🇷",   // Turkey
-      "EIRL": "🇮🇪",  // Ireland
-      "EWI": "🇮🇹",   // Italy
-      "EWJ": "🇯🇵",   // Japan
-      "EWY": "🇰🇷",   // South Korea
-      "EWW": "🇲🇽",   // Mexico
-      "EWN": "🇳🇱",   // Netherlands
-      "ENZL": "🇳🇿",  // New Zealand
-      "ENOR": "🇳🇴",  // Norway
-      "EWS": "🇸🇬",   // Singapore
-      "EWP": "🇪🇸",   // Spain
-      "EWD": "🇸🇪",   // Sweden
-      "EWL": "🇨🇭",   // Switzerland
-      "EWT": "🇹🇼",   // Taiwan
-      "EWU": "🇬🇧"    // United Kingdom
+      "EZA": "za",   // South Africa
+      "EWA": "au",   // Australia
+      "EWO": "at",   // Austria
+      "EWK": "be",   // Belgium
+      "EWZ": "br",   // Brazil
+      "EWC": "ca",   // Canada
+      "MCHI": "cn",  // China
+      "EDEN": "dk",  // Denmark
+      "EFNL": "fi",  // Finland
+      "EWQ": "fr",   // France
+      "EWG": "de",   // Germany
+      "EWH": "hk",   // Hong Kong
+      "INDA": "in",  // India
+      "ECH": "cl",   // Chile
+      "EIDO": "id",  // Indonesia
+      "EIS": "il",   // Israel
+      "EPHE": "ph",  // Philippines
+      "EPOL": "pl",  // Poland
+      "EWM": "my",   // Malaysia
+      "KSA": "sa",   // Saudi Arabia
+      "KWT": "kw",   // Kuwait
+      "QAT": "qa",   // Qatar
+      "THD": "th",   // Thailand
+      "TOK": "jp",   // Japan (Kokusai index)
+      "TUR": "tr",   // Turkey
+      "EIRL": "ie",  // Ireland
+      "EWI": "it",   // Italy
+      "EWJ": "jp",   // Japan
+      "EWY": "kr",   // South Korea
+      "EWW": "mx",   // Mexico
+      "EWN": "nl",   // Netherlands
+      "ENZL": "nz",  // New Zealand
+      "ENOR": "no",  // Norway
+      "EWS": "sg",   // Singapore
+      "EWP": "es",   // Spain
+      "EWD": "se",   // Sweden
+      "EWL": "ch",   // Switzerland
+      "EWT": "tw",   // Taiwan
+      "EWU": "gb"    // United Kingdom
     };
+
+    // Function to get flag image URL
+    function getFlagUrl(countryCode, size = 24) {
+      return `https://flagcdn.com/w${size}/${countryCode}.png`;
+    }
 
     const ALL_TICKERS = Object.values(PORTFOLIO).flatMap(p => p.tickers);
 
@@ -733,7 +738,7 @@
         const displayValue = getColorValue(d.data.name);
         const bgColor = getColor(displayValue);
         const textColor = getTextColor(bgColor);
-        const flag = COUNTRY_FLAGS[d.data.name] || '';
+        const countryCode = COUNTRY_FLAGS[d.data.name] || '';
 
         if (cellWidth < 30 || cellHeight < 24) return;
 
@@ -744,38 +749,42 @@
         );
 
         // Calculate vertical positions based on cell height
-        const hasFlag = flag && cellHeight > 45;
-        const hasPercent = cellHeight > 55 && cellWidth > 38;
+        const hasFlag = countryCode && cellHeight > 50 && cellWidth > 40;
+        const hasPercent = cellHeight > 60 && cellWidth > 38;
+        
+        // Calculate flag size based on cell size
+        const flagWidth = Math.min(Math.max(20, cellWidth * 0.35), 40);
+        const flagHeight = flagWidth * 0.67; // Standard flag aspect ratio
         
         let flagY, tickerY, pctY;
         
         if (hasFlag && hasPercent) {
           // All three: flag, ticker, percent
-          flagY = cellHeight * 0.22;
-          tickerY = cellHeight * 0.48;
-          pctY = cellHeight * 0.75;
+          flagY = cellHeight * 0.18;
+          tickerY = cellHeight * 0.52;
+          pctY = cellHeight * 0.78;
         } else if (hasFlag) {
           // Flag and ticker only
-          flagY = cellHeight * 0.3;
-          tickerY = cellHeight * 0.65;
+          flagY = cellHeight * 0.25;
+          tickerY = cellHeight * 0.68;
         } else if (hasPercent) {
           // Ticker and percent only
           tickerY = cellHeight * 0.4;
-          pctY = cellHeight * 0.7;
+          pctY = cellHeight * 0.72;
         } else {
           // Ticker only
           tickerY = cellHeight / 2;
         }
 
-        // Flag
+        // Flag image
         if (hasFlag) {
-          cell.append('text')
-            .attr('x', cellWidth / 2)
-            .attr('y', flagY)
-            .attr('text-anchor', 'middle')
-            .attr('dominant-baseline', 'middle')
-            .attr('font-size', `${Math.min(tickerSize + 4, 18)}px`)
-            .text(flag);
+          cell.append('image')
+            .attr('href', getFlagUrl(countryCode, 40))
+            .attr('x', (cellWidth - flagWidth) / 2)
+            .attr('y', flagY - flagHeight / 2)
+            .attr('width', flagWidth)
+            .attr('height', flagHeight)
+            .attr('preserveAspectRatio', 'xMidYMid meet');
         }
 
         // Ticker
@@ -820,7 +829,8 @@
       const stock = d.data.data;
       const section = d.data.section;
       const symbol = d.data.name;
-      const flag = COUNTRY_FLAGS[symbol] || '';
+      const countryCode = COUNTRY_FLAGS[symbol] || '';
+      const flagImg = countryCode ? `<img src="${getFlagUrl(countryCode, 24)}" style="width: 20px; height: 14px; vertical-align: middle; margin-right: 6px; border-radius: 2px;">` : '';
 
       if (!stock) return;
 
@@ -839,7 +849,7 @@
 
       tooltip.innerHTML = `
         <div class="tooltip-header">
-          <span class="tooltip-ticker">${flag} ${stock.symbol}</span>
+          <span class="tooltip-ticker">${flagImg}${stock.symbol}</span>
           <span class="tooltip-change" style="color: ${daily >= 0 ? '#00C853' : '#EF5350'}">
             ${daily >= 0 ? '+' : ''}${daily.toFixed(2)}%
           </span>
