@@ -309,14 +309,14 @@
     </div>
     <div class="header-controls">
       <div class="control-group">
-        <select id="sortBy" title="Sort by performance period">
-          <option value="1D">Sort: Daily</option>
-          <option value="1W">Sort: Weekly</option>
-          <option value="1M">Sort: Monthly</option>
-          <option value="3M">Sort: Quarterly</option>
-          <option value="6M">Sort: 6 Month</option>
-          <option value="ytd">Sort: YTD</option>
-          <option value="1Y">Sort: 1 Year</option>
+        <select id="period" title="Performance period">
+          <option value="1D">Period: Daily</option>
+          <option value="1W">Period: Weekly</option>
+          <option value="1M">Period: Monthly</option>
+          <option value="3M">Period: Quarterly</option>
+          <option value="6M">Period: 6 Month</option>
+          <option value="ytd">Period: YTD</option>
+          <option value="1Y">Period: 1 Year</option>
         </select>
       </div>
 
@@ -326,14 +326,6 @@
           <option value="sqrt">Size: Square Root</option>
           <option value="equal">Size: Equal</option>
           <option value="marketcap">Size: By AUM</option>
-        </select>
-      </div>
-
-      <div class="control-group">
-        <select id="colorBy" title="Color boxes by">
-          <option value="period">Color: By Sort Period</option>
-          <option value="daily">Color: Daily %</option>
-          <option value="ytd">Color: YTD %</option>
         </select>
       </div>
 
@@ -420,8 +412,7 @@
     // State
     let stockData = [];
     let priceChangeData = {};
-    let sortBy = '1D';
-    let colorBy = 'period';
+    let period = '1D';
     let sizeBy = 'balanced';
 
     // ============================================
@@ -510,25 +501,11 @@
     }
 
     function getColorValue(symbol) {
-      if (colorBy === 'period') {
-        return getPerformanceValue(symbol, sortBy);
-      } else if (colorBy === 'daily') {
-        return getPerformanceValue(symbol, '1D');
-      } else if (colorBy === 'ytd') {
-        return getPerformanceValue(symbol, 'ytd');
-      }
-      return 0;
+      return getPerformanceValue(symbol, period);
     }
 
     function getColorScale() {
-      if (colorBy === 'period') {
-        return COLOR_SCALES[sortBy] || COLOR_SCALES['1D'];
-      } else if (colorBy === 'daily') {
-        return COLOR_SCALES['daily'];
-      } else if (colorBy === 'ytd') {
-        return COLOR_SCALES['ytd'];
-      }
-      return COLOR_SCALES['1D'];
+      return COLOR_SCALES[period] || COLOR_SCALES['1D'];
     }
 
     function getColor(value) {
@@ -605,7 +582,7 @@
             data: s,
             section: sectionName,
             sectionColor: section.color,
-            sortValue: getPerformanceValue(s.symbol, sortBy)
+            sortValue: getPerformanceValue(s.symbol, period)
           }));
 
         if (stocks.length > 0) {
@@ -888,18 +865,9 @@
         '1D': 'Daily', '1W': 'Weekly', '1M': 'Monthly', 
         '3M': 'Quarterly', '6M': '6 Month', 'ytd': 'YTD', '1Y': '1 Year'
       };
-      
-      let colorLabel = '';
-      if (colorBy === 'period') {
-        colorLabel = periodLabels[sortBy];
-      } else if (colorBy === 'daily') {
-        colorLabel = 'Daily';
-      } else if (colorBy === 'ytd') {
-        colorLabel = 'YTD';
-      }
 
       legend.innerHTML = `
-        <span class="period-indicator">${colorLabel} Performance</span>
+        <span class="period-indicator">${periodLabels[period]} Performance</span>
         ${BASE_COLORS.map((c, i) => `
           <div class="legend-item" style="background: ${c}; color: ${getTextColor(c)}">
             ${scale.labels[i]}
@@ -945,8 +913,8 @@
     }
 
     function setupEventListeners() {
-      document.getElementById('sortBy').addEventListener('change', (e) => {
-        sortBy = e.target.value;
+      document.getElementById('period').addEventListener('change', (e) => {
+        period = e.target.value;
         renderTreemap();
         renderLegend();
       });
@@ -954,12 +922,6 @@
       document.getElementById('sizeBy').addEventListener('change', (e) => {
         sizeBy = e.target.value;
         renderTreemap();
-      });
-
-      document.getElementById('colorBy').addEventListener('change', (e) => {
-        colorBy = e.target.value;
-        renderTreemap();
-        renderLegend();
       });
 
       let resizeTimeout;
