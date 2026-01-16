@@ -298,14 +298,14 @@
   <div class="loading" id="loading">
     <div class="loading-content">
       <div class="spinner"></div>
-      <div>Loading international ETF data...</div>
+      <div>Loading country ETF data...</div>
     </div>
   </div>
 
   <header class="header">
     <div>
       <h1>🌍 Best of US Investors International Heatmap</h1>
-      <span class="header-subtitle">Global & Regional ETFs</span>
+      <span class="header-subtitle">Single Country ETFs by Region</span>
     </div>
     <div class="header-controls">
       <div class="control-group">
@@ -345,47 +345,23 @@
   <script>
     const API_KEY = 'e0enTj1fVE1n8IVYZaFKj6P5nfIHYNMM';
     
-    // ETF Categories
+    // ETF Categories - Single Country ETFs
     const PORTFOLIO = {
       "🌏 Asia Pacific": {
-        tickers: ["AAXJ", "AIA", "IPAC", "EWA", "EWH", "EWJ", "EWJV", "HEWJ", "SCJ", "EWY", "EWT", "EWS", "EWM", "INDA", "INDY", "SMIN", "CNYA", "ECNS", "FXI", "MCHI", "TCHI", "EIDO", "EPHE", "THD", "TOK", "ENZL"],
+        tickers: ["EWA", "MCHI", "EWH", "INDA", "EIDO", "EWJ", "EWY", "EWM", "ENZL", "EPHE", "EWS", "EWT", "THD", "TOK"],
         color: "#E65100"
       },
       "🇪🇺 Europe": {
-        tickers: ["EZU", "HEZU", "IEUR", "IEUS", "IEV", "EUFN", "EWQ", "EWG", "EWI", "EIRL", "EWN", "ENOR", "EWP", "EWD", "EWL", "EWU", "EWUS", "EWO", "EWK", "EFNL", "IBRN"],
+        tickers: ["EWO", "EWK", "EDEN", "EFNL", "EWQ", "EWG", "EIRL", "EWI", "EWN", "ENOR", "EPOL", "EWP", "EWD", "EWL", "EWU"],
         color: "#1565C0"
       },
-      "🌎 Americas (ex-US)": {
-        tickers: ["EWC", "EWW", "EWZ", "EWZS", "ILF", "ECH", "EPU"],
+      "🌎 Americas": {
+        tickers: ["EWZ", "EWC", "ECH", "EWW"],
         color: "#2E7D32"
       },
-      "🌍 Emerging Markets": {
-        tickers: ["EEM", "EEMA", "EEMS", "EEMV", "EMGF", "EMIF", "EMXC", "HEEM", "IEMG", "BKF", "ESGE", "LDEM", "EMXF"],
-        color: "#7B1FA2"
-      },
-      "🇮🇱 Middle East & Africa": {
-        tickers: ["EZA", "EDEN", "EIS", "KSA", "KWT", "QAT", "TUR", "UAE"],
+      "🌍 Middle East & Africa": {
+        tickers: ["EZA", "EIS", "KSA", "KWT", "QAT", "TUR"],
         color: "#C62828"
-      },
-      "🌐 Global & Intl Developed": {
-        tickers: ["ACWX", "ACWI", "ACWV", "EFA", "EFAV", "EFG", "EFV", "ESGD", "HEFA", "HSCZ", "IEFA", "SCZ", "DMXF", "IDEV", "IXUS", "HAWX", "CRBN", "URTH", "DSI"],
-        color: "#00838F"
-      },
-      "📊 Global Sectors": {
-        tickers: ["EXI", "ICLN", "IGF", "IOO", "IXC", "IXG", "IXJ", "IXN", "IXP", "JXI", "KXI", "MXI", "PICK", "RING", "RXI", "SLVP", "WOOD", "VEGI", "EPP", "DVYA", "DVYE"],
-        color: "#F9A825"
-      },
-      "💡 Smart Beta & Factor": {
-        tickers: ["AQLT", "EQLT", "EVLU", "GLOF", "IMTM", "INTF", "IQLT", "ISCF", "ISVL", "IVLU", "LCTD", "SDG", "WSML", "BIDD", "CORO", "IDV", "IDYN", "IGRO"],
-        color: "#6A1B9A"
-      },
-      "🏦 Fixed Income & Bonds": {
-        tickers: ["BEMB", "BREM", "EMB", "EUHY", "EUIG", "GGOV", "IAGG", "IGOV", "ISHG", "PABD", "BND"],
-        color: "#455A64"
-      },
-      "🏢 Real Estate": {
-        tickers: ["REET", "IFGL"],
-        color: "#5D4037"
       }
     };
 
