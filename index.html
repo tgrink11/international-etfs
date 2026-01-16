@@ -365,6 +365,49 @@
       }
     };
 
+    // Country flags for each ETF
+    const COUNTRY_FLAGS = {
+      "EZA": "🇿🇦",   // South Africa
+      "EWA": "🇦🇺",   // Australia
+      "EWO": "🇦🇹",   // Austria
+      "EWK": "🇧🇪",   // Belgium
+      "EWZ": "🇧🇷",   // Brazil
+      "EWC": "🇨🇦",   // Canada
+      "MCHI": "🇨🇳",  // China
+      "EDEN": "🇩🇰",  // Denmark
+      "EFNL": "🇫🇮",  // Finland
+      "EWQ": "🇫🇷",   // France
+      "EWG": "🇩🇪",   // Germany
+      "EWH": "🇭🇰",   // Hong Kong
+      "INDA": "🇮🇳",  // India
+      "ECH": "🇨🇱",   // Chile
+      "EIDO": "🇮🇩",  // Indonesia
+      "EIS": "🇮🇱",   // Israel
+      "EPHE": "🇵🇭",  // Philippines
+      "EPOL": "🇵🇱",  // Poland
+      "EWM": "🇲🇾",   // Malaysia
+      "KSA": "🇸🇦",   // Saudi Arabia
+      "KWT": "🇰🇼",   // Kuwait
+      "QAT": "🇶🇦",   // Qatar
+      "THD": "🇹🇭",   // Thailand
+      "TOK": "🇯🇵",   // Japan (Kokusai index)
+      "TUR": "🇹🇷",   // Turkey
+      "EIRL": "🇮🇪",  // Ireland
+      "EWI": "🇮🇹",   // Italy
+      "EWJ": "🇯🇵",   // Japan
+      "EWY": "🇰🇷",   // South Korea
+      "EWW": "🇲🇽",   // Mexico
+      "EWN": "🇳🇱",   // Netherlands
+      "ENZL": "🇳🇿",  // New Zealand
+      "ENOR": "🇳🇴",  // Norway
+      "EWS": "🇸🇬",   // Singapore
+      "EWP": "🇪🇸",   // Spain
+      "EWD": "🇸🇪",   // Sweden
+      "EWL": "🇨🇭",   // Switzerland
+      "EWT": "🇹🇼",   // Taiwan
+      "EWU": "🇬🇧"    // United Kingdom
+    };
+
     const ALL_TICKERS = Object.values(PORTFOLIO).flatMap(p => p.tickers);
 
     // Dynamic color scales based on period
@@ -690,18 +733,55 @@
         const displayValue = getColorValue(d.data.name);
         const bgColor = getColor(displayValue);
         const textColor = getTextColor(bgColor);
+        const flag = COUNTRY_FLAGS[d.data.name] || '';
 
         if (cellWidth < 30 || cellHeight < 24) return;
 
         const tickerSize = Math.min(
           Math.max(8, Math.floor(cellWidth / 5)),
-          Math.max(8, Math.floor(cellHeight / 2.8)),
+          Math.max(8, Math.floor(cellHeight / 3.5)),
           13
         );
 
+        // Calculate vertical positions based on cell height
+        const hasFlag = flag && cellHeight > 45;
+        const hasPercent = cellHeight > 55 && cellWidth > 38;
+        
+        let flagY, tickerY, pctY;
+        
+        if (hasFlag && hasPercent) {
+          // All three: flag, ticker, percent
+          flagY = cellHeight * 0.22;
+          tickerY = cellHeight * 0.48;
+          pctY = cellHeight * 0.75;
+        } else if (hasFlag) {
+          // Flag and ticker only
+          flagY = cellHeight * 0.3;
+          tickerY = cellHeight * 0.65;
+        } else if (hasPercent) {
+          // Ticker and percent only
+          tickerY = cellHeight * 0.4;
+          pctY = cellHeight * 0.7;
+        } else {
+          // Ticker only
+          tickerY = cellHeight / 2;
+        }
+
+        // Flag
+        if (hasFlag) {
+          cell.append('text')
+            .attr('x', cellWidth / 2)
+            .attr('y', flagY)
+            .attr('text-anchor', 'middle')
+            .attr('dominant-baseline', 'middle')
+            .attr('font-size', `${Math.min(tickerSize + 4, 18)}px`)
+            .text(flag);
+        }
+
+        // Ticker
         cell.append('text')
           .attr('x', cellWidth / 2)
-          .attr('y', cellHeight / 2 - (cellHeight > 42 ? 6 : 1))
+          .attr('y', tickerY)
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'middle')
           .attr('font-size', `${tickerSize}px`)
@@ -709,13 +789,14 @@
           .attr('fill', textColor)
           .text(d.data.name);
 
-        if (cellHeight > 42 && cellWidth > 38) {
+        // Percentage
+        if (hasPercent) {
           const pctText = (displayValue >= 0 ? '+' : '') + displayValue.toFixed(2) + '%';
           const pctSize = Math.min(tickerSize - 1, 10);
           
           cell.append('text')
             .attr('x', cellWidth / 2)
-            .attr('y', cellHeight / 2 + tickerSize / 2 + 5)
+            .attr('y', pctY)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
             .attr('font-size', `${pctSize}px`)
@@ -739,6 +820,7 @@
       const stock = d.data.data;
       const section = d.data.section;
       const symbol = d.data.name;
+      const flag = COUNTRY_FLAGS[symbol] || '';
 
       if (!stock) return;
 
@@ -757,7 +839,7 @@
 
       tooltip.innerHTML = `
         <div class="tooltip-header">
-          <span class="tooltip-ticker">${stock.symbol}</span>
+          <span class="tooltip-ticker">${flag} ${stock.symbol}</span>
           <span class="tooltip-change" style="color: ${daily >= 0 ? '#00C853' : '#EF5350'}">
             ${daily >= 0 ? '+' : ''}${daily.toFixed(2)}%
           </span>
