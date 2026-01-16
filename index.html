@@ -323,6 +323,7 @@
       <div class="control-group">
         <select id="sizeBy" title="Size boxes by">
           <option value="balanced">Size: Balanced</option>
+          <option value="sqrt">Size: Square Root</option>
           <option value="equal">Size: Equal</option>
           <option value="marketcap">Size: By AUM</option>
         </select>
@@ -567,6 +568,17 @@
           const logMax = Math.log10(maxCap);
           const normalized = (logVal - logMin) / (logMax - logMin);
           return 1 + (normalized * 3);
+        
+        case 'sqrt':
+          // Square root - moderate compression, large caps ~10-20x bigger than small
+          const allCapsSqrt = stockData.map(s => s.marketCap || 1000000);
+          const minCapSqrt = Math.min(...allCapsSqrt);
+          const maxCapSqrt = Math.max(...allCapsSqrt);
+          const sqrtVal = Math.sqrt(marketCap);
+          const sqrtMin = Math.sqrt(minCapSqrt);
+          const sqrtMax = Math.sqrt(maxCapSqrt);
+          const sqrtNormalized = (sqrtVal - sqrtMin) / (sqrtMax - sqrtMin);
+          return 1 + (sqrtNormalized * 8);
         
         case 'marketcap':
         default:
